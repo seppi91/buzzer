@@ -117,6 +117,10 @@ wss.on('connection', function(ws) {
 		case 'buzz':
 			if (buzzEnabled) {
 				var pid = msg.pid;
+				wss.broadcast(JSON.stringify({
+					'label' : 'opponent buzzed',
+					'pid' : pid
+				}));
 				if (buzzOrder.indexOf(pid) == -1) {
 					buzzOrder.push(pid);
 					wss.broadcast(JSON.stringify({

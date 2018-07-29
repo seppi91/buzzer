@@ -41,6 +41,11 @@ function giveBirthToSocket()
 		case 'disable buzz':
 			disableBuzz();
 			break;
+		case 'opponent buzzed':
+			if (msg.pid != pid) {
+				opponentBuzzed();
+			}
+			break;
 		default:
 			// Nothing
 		}
@@ -53,21 +58,54 @@ function giveBirthToSocket()
 	}, 500);
 }
 
+
+function opponentBuzzed() {
+	$("#buzzbutt").attr("src", "img/Buzzer_off.png");
+	$("input").prop('disabled', true);
+}
+
 function enableBuzz() {
-	$("#buzzbutt").attr("src", "img/enabutton.png");
+	$("#buzzbutt").attr("src", "img/Buzzer_green_off.png");
 	$("input").prop('disabled', false);
 }
 
 function disableBuzz() {
-	$("#buzzbutt").attr("src", "img/disbutton.png");
+	$("#buzzbutt").attr("src", "img/Buzzer_off.png");
 	$("input").prop('disabled', true);
 }
 
+function showCountdown(bullets) {
+	var bullets = 4;
+	$("#countdown").css("visibility", "visible");
+	setTimeout(function(){
+		var cdinterval = setInterval(function() {
+			if (bullets == -1) {
+				$("#countdown").css("visibility", "hidden");
+				$("#countdownimg").attr("src", "img/CountDown_Bullet_5.png");
+				clearInterval(cdinterval);
+				return;
+			}
+	
+			$("#countdownimg").attr("src", "img/CountDown_Bullet_" + bullets + ".png");
+	
+			bullets -= 1;
+	
+		 }, 1000)
+	}, 2000)
+}
+
 function sendBuzz() {
+	setTimeout(function(){
+		$("#buzzbutt").attr("src", "img/Buzzer_green_off.png");
+	}, 1000);
+	$("#buzzbutt").attr("src", "img/Buzzer_green_on.png");
 	socket.send(JSON.stringify({
 		'label' : 'buzz',
 		'pid' : pid
 	}));
+	$("input").prop('disabled', true);
+
+	showCountdown();
 }
 
 function cguid() {
